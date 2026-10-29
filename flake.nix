@@ -43,6 +43,14 @@
           xorgproto
         ];
         cargoBuildFlags = ["--bin" "wordcraft"];
+        patchPhase = ''
+          # Remove unused egui patches that cause validation errors
+          sed -i '/egui_demo_lib = /d' Cargo.toml
+          sed -i '/egui_extras = /d' Cargo.toml
+          sed -i '/egui_inspection = /d' Cargo.toml
+          sed -i '/egui_system_font_provider = /d' Cargo.toml
+          sed -i '/egui_demo_lib = /d' Cargo.toml
+        '';
       };
     in {
       packages.${system}.default = wordcraftPackage;
