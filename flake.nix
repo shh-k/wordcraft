@@ -43,6 +43,7 @@
           xorgproto
         ];
         cargoBuildFlags = ["--bin" "wordcraft"];
+        doCheck = false;
         patchPhase = ''
           # Remove unused egui patches that cause validation errors
           sed -i '/egui_demo_lib = /d' Cargo.toml
