@@ -19,6 +19,5 @@
   "epaint_default_fonts-0.37.0": "sha256-rogWbZJ+s03Va4FWrKz4TScm83HaYJCUtp0ICHqdkeA=",
   "krilla-0.8.2": "sha256-M6mckb5dxy89+KbxZXzeg23y6hFyks/tH+Q4zzFIoWs=",
   "winit-0.30.13": "sha256-Or20hXg3b1B1MvjdV60FtdezIAzTJBfO6f+C/jNrlZE=",
-  "winprint-0.2.1": "sha256-cxim2OFqzJCV7zI+5kIM0XVSklusGs/QEBTsTEeUhC0=",
-  "zvariant_utils-4.2.0": "sha256-tb2CIYnYd+xoijqWgEvRtNhIfXbQbxYndDZ2btk8Aso="
+  "winprint-0.2.1": "sha256-cxim2OFqzJCV7zI+5kIM0XVSklusGs/QEBTsTEeUhC0="
 }
