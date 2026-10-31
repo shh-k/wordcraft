@@ -13,6 +13,27 @@
         then builtins.fromJSON (builtins.readFile ./hashes-filtered.json)
         else {};
       
+      # Runtime libraries that the binary dlopen's (libxkbcommon-x11 is part of libxkbcommon)
+      runtimeLibs = with pkgs; [
+        wayland
+        libxkbcommon
+        fontconfig
+        freetype
+        vulkan-loader
+        libGL
+        libX11
+        libXext
+        libXcursor
+        libXfixes
+        libXi
+        libXrandr
+        libXrender
+        libXScrnSaver
+        libXtst
+        libXxf86vm
+        libxcb
+      ];
+      
       wordcraftPackage = pkgs.rustPlatform.buildRustPackage {
         pname = "wordcraft";
         version = "0.12.0";
@@ -21,7 +42,7 @@
           lockFile = ./Cargo.lock;
           outputHashes = cargoOutputHashes;
         };
-        nativeBuildInputs = with pkgs; [ pkg-config clang cmake ];
+        nativeBuildInputs = with pkgs; [ pkg-config clang cmake makeWrapper ];
         buildInputs = with pkgs; [
           wayland
           libxkbcommon
@@ -45,12 +66,18 @@
         cargoBuildFlags = ["--bin" "wordcraft"];
         doCheck = false;
         patchPhase = ''
+          # Disable startup update check: the updater tries to write to the read-only nix store
+          sed -i 's|app.set_startup_update_check(true);|// app.set_startup_update_check(true);|' apps/wordcraft/src/main.rs
           # Remove unused egui patches that cause validation errors
           sed -i '/egui_demo_lib = /d' Cargo.toml
           sed -i '/egui_extras = /d' Cargo.toml
           sed -i '/egui_inspection = /d' Cargo.toml
           sed -i '/egui_system_font_provider = /d' Cargo.toml
           sed -i '/egui_demo_lib = /d' Cargo.toml
+        '';
+        postInstall = ''
+          # Wrap the binary to include runtime libraries
+          wrapProgram $out/bin/wordcraft --prefix LD_LIBRARY_PATH : "${pkgs.lib.makeLibraryPath runtimeLibs}"
         '';
       };
     in {
@@ -86,25 +113,7 @@
         ];
 
         shellHook = ''
-          export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [
-            pkgs.wayland
-            pkgs.libxkbcommon
-            pkgs.fontconfig
-            pkgs.freetype
-            pkgs.vulkan-loader
-            pkgs.libGL
-            pkgs.libX11
-            pkgs.libXext
-            pkgs.libXcursor
-            pkgs.libXfixes
-            pkgs.libXi
-            pkgs.libXrandr
-            pkgs.libXrender
-            pkgs.libXScrnSaver
-            pkgs.libXtst
-            pkgs.libXxf86vm
-            pkgs.libxcb
-          ]}:''${LD_LIBRARY_PATH:-}"
+          export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath runtimeLibs}:$LD_LIBRARY_PATH"
         '';
       };
     };

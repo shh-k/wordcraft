@@ -1,0 +1,65 @@
+[package]
+name = "dify"
+authors = ["Jihchi Lee <achi@987.tw>"]
+version = "0.8.0"
+description = "A fast pixel-by-pixel image comparison tool in Rust"
+homepage = "https://github.com/jihchi/dify"
+documentation = "https://docs.rs/dify"
+repository = "https://github.com/jihchi/dify.git"
+readme = "README.md"
+license = "MIT"
+edition = "2024"
+include = [
+  "src/**/*.rs",
+  "Cargo.toml",
+  "README.md",
+  "LICENSE.md",
+]
+keywords = [
+  "image",
+  "diff",
+  "compare",
+  "changes",
+  "assert",
+]
+categories = [
+  "command-line-utilities",
+  "multimedia::images",
+]
+
+[package.metadata.release]
+pre-release-commit-message = "Bump version to {{version}}"
+
+[features]
+default = ["image/default"]
+
+### BEGIN
+# Fix an issue where `cargo bench -- --save-baseline` does not work.
+# For more details, please see https://bheisler.github.io/criterion.rs/book/faq.html#cargo-bench-gives-unrecognized-option-errors-for-valid-command-line-options
+[[bin]]
+name = "dify"
+path = "src/main.rs"
+bench = false
+
+[lib]
+bench = false
+### END
+
+[[bench]]
+name = "benchmark"
+path = "./benches/benchmark.rs"
+harness = false
+
+[dev-dependencies]
+criterion = "0.3.4"
+assert_cmd = "2.1.1"
+assert_fs = "1.0.1"
+predicates = "2.0.1"
+image = { version = "0.25.2", default-features = true }
+
+[dependencies]
+image = { version = "0.25.2", default-features = false }
+getopts = "0.2.21"
+anyhow = "1.0.40"
+colored = "2.0.0"
+rayon = "1.5.0"

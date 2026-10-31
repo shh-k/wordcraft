@@ -1,0 +1,31 @@
+[package]
+# Forked on 22 February 2025 from codesign-verify-rs by Vlad Krasnov <vlad@cloudflare.com>
+name = "verifysign"
+version = "1.0.1"
+description = "Verify the digital code signature of files and running processes on Windows and macOS."
+authors = ["Vlad Krasnov <vlad@cloudflare.com>","I-Alzamil <easysekker@gmail.com>"]
+edition = "2024"
+license = "BSD-3-Clause"
+repository = "https://github.com/I-Alzamil/verifysign"
+keywords = ["macos", "windows", "code", "signature", "authenticode"]
+categories = ["os::macos-apis", "os::windows-apis", "authentication"]
+rust-version = "1.85"
+exclude = [".github"]
+
+[target.'cfg(target_os = "macos")'.dependencies]
+core-foundation = "0.10"
+
+[target.'cfg(windows)'.dependencies]
+windows-sys = { version = "0.61", features = [
+                                        "Win32_Storage_FileSystem",
+                                        "Win32_System_Threading",
+                                        "Win32_Security_WinTrust",
+                                        "Win32_Security_Cryptography",
+                                        "Win32_Security_Cryptography_Catalog",
+                                        "Win32_Security_Cryptography_Sip"
+                                    ] }
+
+[package.metadata.docs.rs]
+default-target = "x86_64-pc-windows-msvc"
+targets = ["x86_64-pc-windows-msvc", "aarch64-apple-darwin"]
+rustdoc-args = ["--cfg", "docsrs"]
